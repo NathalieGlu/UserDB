@@ -27,7 +27,7 @@ public class Servlet extends HttpServlet {
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response) {
 
-        JSONObject jsonObject = null;
+        JSONObject jsonObject = userDao.getUsers();
 
         response.setContentType("application/json");
         try {
