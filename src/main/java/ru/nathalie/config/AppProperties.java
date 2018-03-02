@@ -9,22 +9,26 @@ import java.util.Properties;
 
 public class AppProperties {
 
+    private static final String DRIVER_PROPERTY_NAME = "driver";
+    private static final String URL_PROPERTY_NAME = "url";
+    private static final String DB_USERNAME_PROPERTY_NAME = "dbUsername";
+    private static final String DB_PASSWORD_PROPERTY_NAME = "dbPassword";
+    private final static Logger log = LoggerFactory.getLogger(AppProperties.class.getName());
     private String driver;
     private String url;
     private String dbUsername;
     private String dbPassword;
-    private final static Logger log = LoggerFactory.getLogger(AppProperties.class.getName());
 
     public AppProperties() {
 
-        try (InputStream input = new FileInputStream("/home/nathalie/IdeaProjects/UserDB/src/main/resources/application.yaml");) {
+        try (InputStream input = new FileInputStream(System.getProperty("user.dir") + "src/main/resources/application.yaml")) {
             Properties props = new Properties();
             props.load(input);
 
-            this.driver = props.getProperty("driver");
-            this.url = props.getProperty("url");
-            this.dbUsername = props.getProperty("dbUsername");
-            this.dbPassword = props.getProperty("dbPassword");
+            this.driver = props.getProperty(DRIVER_PROPERTY_NAME);
+            this.url = props.getProperty(URL_PROPERTY_NAME);
+            this.dbUsername = props.getProperty(DB_USERNAME_PROPERTY_NAME);
+            this.dbPassword = props.getProperty(DB_PASSWORD_PROPERTY_NAME);
 
             log.info("Loaded config");
         } catch (Exception e) {
