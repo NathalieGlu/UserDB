@@ -3,7 +3,7 @@ package ru.nathalie.dao;
 import ru.nathalie.db.Connector;
 
 public class BalanceDaoImpl implements BalanceDao {
-    private Connector connector;
+    private final Connector connector;
 
     public BalanceDaoImpl(Connector connector) {
         this.connector = connector;

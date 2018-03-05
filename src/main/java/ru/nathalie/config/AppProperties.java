@@ -9,10 +9,12 @@ import java.util.Properties;
 
 public class AppProperties {
 
+    private static final String RESOURCES_YAML = "/src/main/resources/application.yaml";
     private static final String DRIVER_PROPERTY_NAME = "driver";
     private static final String URL_PROPERTY_NAME = "url";
     private static final String DB_USERNAME_PROPERTY_NAME = "dbUsername";
     private static final String DB_PASSWORD_PROPERTY_NAME = "dbPassword";
+    private static final String USER_DIR = "user.dir";
     private final static Logger log = LoggerFactory.getLogger(AppProperties.class.getName());
     private String driver;
     private String url;
@@ -21,7 +23,7 @@ public class AppProperties {
 
     public AppProperties() {
 
-        try (InputStream input = new FileInputStream(System.getProperty("user.dir") + "src/main/resources/application.yaml")) {
+        try (InputStream input = new FileInputStream(System.getProperty(USER_DIR) + RESOURCES_YAML)) {
             Properties props = new Properties();
             props.load(input);
 

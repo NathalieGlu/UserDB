@@ -5,7 +5,7 @@ import ru.nathalie.db.Connector;
 
 public class UserDaoImpl implements UserDao {
 
-    private Connector connector;
+    private final Connector connector;
 
     public UserDaoImpl(Connector connector) {
         this.connector = connector;

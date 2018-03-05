@@ -13,8 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Connector {
-    private final static String GET_USERS = "SELECT * FROM users";
-    private final static Logger log = LoggerFactory.getLogger(Connector.class.getName());
+    private static final String GET_USERS = "SELECT * FROM users";
+    private static final String GET_BALANCE_BY_ID = "SELECT user_balance FROM users WHERE user_id = ?";
+    private static final String USER_ID = "user_id";
+    private static final String USER_NAME = "user_name";
+    private static final String USER_BALANCE = "user_balance";
+    private static final Logger log = LoggerFactory.getLogger(Connector.class.getName());
     private final DataSource dataSource;
 
     public Connector(DataSource dataSource) {
@@ -22,9 +26,8 @@ public class Connector {
     }
 
     public JSONObject getUsers() {
-        try {
-            Connection connection = dataSource.getConnection();
-            PreparedStatement statement = connection.prepareStatement(GET_USERS);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(GET_USERS);) {
 
             ResultSet rs = statement.executeQuery();
             JSONObject jsonObject = new JSONObject();
@@ -32,8 +35,8 @@ public class Connector {
             while (rs.next()) {
 
                 Map<String, String> map = new HashMap<>();
-                map.put("user_id", rs.getString("user_id"));
-                map.put("user_name", rs.getString("user_name"));
+                map.put(USER_ID, rs.getString(USER_ID));
+                map.put(USER_NAME, rs.getString(USER_NAME));
 
                 jsonObject.put(String.valueOf(rs.getRow()), map);
             }
@@ -48,6 +51,17 @@ public class Connector {
     }
 
     public String getBalance(int id) {
+        try (Connection connection = dataSource.getConnection()) {
+
+            PreparedStatement statement = connection.prepareStatement(GET_BALANCE_BY_ID);
+            statement.setInt(1, id);
+
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            return Double.toString(rs.getDouble(USER_BALANCE));
+        } catch (SQLException e) {
+            log.error("Exception during statement execution: ", e);
+        }
         return null;
     }
 }

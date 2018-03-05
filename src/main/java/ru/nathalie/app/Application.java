@@ -10,13 +10,15 @@ import java.net.ServerSocket;
 
 public class Application {
     private final static Logger log = LoggerFactory.getLogger(Application.class);
+    private final static int PORT = 8080;
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) throws IOException {
 
-        ServerSocket ss = new ServerSocket(8080);
+        ServerSocket ss = new ServerSocket(PORT);
+        WebServer webServer = ServerFactory.build();
+
         while (true) {
-            WebServer webServer = ServerFactory.build();
             webServer.setSocket(ss.accept());
             log.info("Client accepted");
             new Thread(webServer).start();

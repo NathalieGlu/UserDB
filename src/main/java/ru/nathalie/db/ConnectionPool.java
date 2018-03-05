@@ -14,17 +14,13 @@ import java.util.stream.IntStream;
 
 public class ConnectionPool {
 
-    private final static Logger log = LoggerFactory.getLogger(ConnectionFactory.class.getName());
     private static final int MAX_ACTIVE = 20;
+    private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class.getName());
     private static GenericObjectPool genericObjectPool;
     private final AppProperties properties;
 
     public ConnectionPool(AppProperties appProperties) {
         this.properties = appProperties;
-    }
-
-    public static GenericObjectPool getGenericObjectPool() {
-        return genericObjectPool;
     }
 
     public DataSource setPool() {
@@ -45,7 +41,7 @@ public class ConnectionPool {
             log.error("Driver not found: ", e);
         }
 
-        IntStream.range(0, 20)
+        IntStream.range(0, MAX_ACTIVE)
                 .forEach(i -> {
                     try {
                         genericObjectPool.addObject();
