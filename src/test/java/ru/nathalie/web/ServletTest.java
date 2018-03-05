@@ -1,6 +1,5 @@
 package ru.nathalie.web;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,12 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
-import ru.nathalie.dao.UserDaoImpl;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import ru.nathalie.factory.ServerFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,9 +15,7 @@ import static org.junit.Assert.assertEquals;
 public class ServletTest extends Mockito {
 
     @Mock
-    HttpServletRequest request;
-    @Mock
-    HttpServletResponse response;
+    WebServer webServer;
 
     @Before
     public void setup() {
@@ -31,19 +23,27 @@ public class ServletTest extends Mockito {
     }
 
     @Test
-    public void testResult() throws Exception {
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
+    public void testGetUsers() {
 
-        when(response.getWriter()).thenReturn(writer);
-
-        new Servlet().doPost(request, response);
-
-        String result = stringWriter.getBuffer().toString().trim();
+        WebServer server = ServerFactory.build();
+        String result = server.getUsers();
         System.out.println("Result: " + result);
 
-        UserDaoImpl userDao = new UserDaoImpl();
-        JSONObject jsonObject = userDao.getUsers();
-        assertEquals(jsonObject.toString(), result);
+        when(webServer.getUsers()).thenReturn(result);
+
+        assertEquals(result, webServer.getUsers());
+    }
+
+    @Test
+    public void testGetBalance() {
+        WebServer server = ServerFactory.build();
+        int id = 1452135;
+
+        String balance = server.getBalance(id);
+        System.out.println("Balance: " + balance);
+
+        when(webServer.getBalance(id)).thenReturn(balance);
+
+        assertEquals(balance, webServer.getBalance(id));
     }
 }
