@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
+
 public class AppProperties {
 
     private static final String RESOURCES_YAML = "/src/main/resources/application.yaml";

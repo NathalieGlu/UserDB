@@ -1,6 +1,5 @@
-package ru.nathalie.dao;
+package ru.nathalie.model.dao;
 
-import org.json.JSONObject;
 import ru.nathalie.db.Connector;
 
 public class UserDaoImpl implements UserDao {
@@ -12,7 +11,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public JSONObject getUsers() {
-        return connector.getUsers();
+    public String getUsers() {
+        return connector.getUsers().toString();
     }
 }

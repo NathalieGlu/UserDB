@@ -17,7 +17,8 @@ public class ConnectionPool {
     private static final int MAX_ACTIVE = 20;
     private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class.getName());
     private static GenericObjectPool genericObjectPool;
-    private final AppProperties properties;
+
+    private AppProperties properties;
 
     public ConnectionPool(AppProperties appProperties) {
         this.properties = appProperties;

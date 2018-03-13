@@ -1,4 +1,4 @@
-package ru.nathalie.dao;
+package ru.nathalie.model.dao;
 
 public interface BalanceDao {
 

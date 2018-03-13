@@ -61,7 +61,7 @@ public class Connector {
             return Double.toString(rs.getDouble(USER_BALANCE));
         } catch (SQLException e) {
             log.error("Exception during statement execution: ", e);
+            return null;
         }
-        return null;
     }
 }

@@ -1,0 +1,9 @@
+dbPassword: 123
+dbUsername: nathalie
+driver: org.postgresql.Driver
+url: jdbc:postgresql://127.0.0.1:5432/
+
+logging:
+    file: ./logging.log
+    pattern:
+        file: '"%msg%n"'
