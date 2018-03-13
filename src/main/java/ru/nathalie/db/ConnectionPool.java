@@ -13,7 +13,6 @@ import javax.sql.DataSource;
 import java.util.stream.IntStream;
 
 public class ConnectionPool {
-    private static final int MAX_ACTIVE = 20;
     private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class.getName());
     private static GenericObjectPool genericObjectPool;
 
@@ -24,13 +23,14 @@ public class ConnectionPool {
     }
 
     public DataSource setPool() {
+        Integer maxActive = properties.getMaxActive();
         try {
             Class.forName(properties.getDriver());
 
             genericObjectPool = new GenericObjectPool();
-            genericObjectPool.setMinIdle(MAX_ACTIVE);
-            genericObjectPool.setMaxIdle(MAX_ACTIVE);
-            genericObjectPool.setMaxActive(MAX_ACTIVE);
+            genericObjectPool.setMinIdle(maxActive);
+            genericObjectPool.setMaxIdle(maxActive);
+            genericObjectPool.setMaxActive(maxActive);
 
             ConnectionFactory factory = new DriverManagerConnectionFactory(properties.getUrl(),
                     properties.getDbUsername(), properties.getDbPassword());
@@ -41,7 +41,7 @@ public class ConnectionPool {
             log.error("Driver not found: ", e);
         }
 
-        IntStream.range(0, MAX_ACTIVE)
+        IntStream.range(0, maxActive)
                 .forEach(i -> {
                     try {
                         genericObjectPool.addObject();

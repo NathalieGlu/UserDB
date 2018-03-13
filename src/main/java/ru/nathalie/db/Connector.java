@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Connector {
-    private static final String GET_USERS = "SELECT * FROM users";
+    private static final String GET_USERS = "SELECT user_id, user_name FROM users";
     private static final String GET_BALANCE_BY_ID = "SELECT user_balance FROM users WHERE user_id = ?";
     private static final String USER_ID = "user_id";
     private static final String USER_NAME = "user_name";
