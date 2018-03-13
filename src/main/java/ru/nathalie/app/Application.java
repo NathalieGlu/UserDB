@@ -11,7 +11,7 @@ import java.net.ServerSocket;
 public class Application {
     private final static Logger log = LoggerFactory.getLogger(Application.class.getName());
     private final static int PORT = 8080;
-    private static ServerFactory factory = new ServerFactory();
+    private final static ServerFactory factory = new ServerFactory();
 
     @SuppressWarnings("InfiniteLoopStatement")
     public static void main(String[] args) throws IOException {

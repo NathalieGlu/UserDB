@@ -1,7 +1,5 @@
 package ru.nathalie.factory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ru.nathalie.config.AppProperties;
 import ru.nathalie.db.ConnectionPool;
 
@@ -10,8 +8,6 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 
 public class ServerFactory {
-
-    private final static Logger log = LoggerFactory.getLogger(ServerFactory.class.getName());
     private Map<String, Object> factory = new HashMap<>();
     private LinkedList<Class> classNeedsArgs = new LinkedList<>();
 

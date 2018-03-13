@@ -1,7 +1,7 @@
 package ru.nathalie.model.iostream;
 
 public class OutputStreamData {
-    private String httpVersion = "HTTP/1.1 ";
+    private final String httpVersion = "HTTP/1.1 ";
     private String code;
     private String serverInfo = "Server: NathalieGlu/2018-03-05\r\n" +
             "Content-Type: text/html\r\n" +

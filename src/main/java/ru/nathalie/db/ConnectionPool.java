@@ -13,12 +13,11 @@ import javax.sql.DataSource;
 import java.util.stream.IntStream;
 
 public class ConnectionPool {
-
     private static final int MAX_ACTIVE = 20;
     private static final Logger log = LoggerFactory.getLogger(ConnectionFactory.class.getName());
     private static GenericObjectPool genericObjectPool;
 
-    private AppProperties properties;
+    private final AppProperties properties;
 
     public ConnectionPool(AppProperties appProperties) {
         this.properties = appProperties;

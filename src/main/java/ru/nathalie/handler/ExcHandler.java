@@ -9,10 +9,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class ExcHandler {
-
     private static final Logger log = LoggerFactory.getLogger(WebServer.class.getName());
     private OutputStream os;
-
 
     public void setStream(OutputStream os) {
         this.os = os;

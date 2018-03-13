@@ -7,9 +7,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Properties;
 
-
 public class AppProperties {
-
     private static final String RESOURCES_YAML = "/src/main/resources/application.yaml";
     private static final String DRIVER_PROPERTY_NAME = "driver";
     private static final String URL_PROPERTY_NAME = "url";

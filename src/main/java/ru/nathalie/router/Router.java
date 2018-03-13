@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 
 public class Router {
-
     private static final String HTTP_BAD_REQUEST = "400 Bad Request\n";
     private final Controller controller;
     private Map<String, BiConsumer<InputStreamData, OutputStreamData>> mappings = new HashMap<>();
