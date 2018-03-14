@@ -51,7 +51,7 @@ public class ServerFactory {
                 classNeedsArgs.addLast(newClass);
             }
         } catch (Exception e) {
-            throw new IOException("Error during injection ob bean " + newClass.getName());
+            throw new IOException("Error during injection of bean " + newClass.getName());
         }
     }
 
@@ -81,7 +81,7 @@ public class ServerFactory {
                 }
             }
         } catch (Exception e) {
-            throw new IOException("Error during injection ob bean " + className);
+            throw new IOException("Error during injection of bean " + className);
         }
     }
 }

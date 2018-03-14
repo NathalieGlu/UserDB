@@ -1,6 +1,6 @@
-package ru.nathalie.model.iostream;
+package ru.nathalie.model.data;
 
-public class OutputStreamData {
+public class ResponseData {
     private final String httpVersion = "HTTP/1.1 ";
     private String code;
     private String serverInfo = "Server: NathalieGlu/2018-03-05\r\n" +

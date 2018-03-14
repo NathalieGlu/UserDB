@@ -8,25 +8,24 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class AppProperties {
-    private static final String RESOURCES_YAML = "/src/main/resources/application.yaml";
+    private static final String RESOURCES_YAML = "application.yaml";
     private static final String DRIVER_PROPERTY_NAME = "driver";
     private static final String PORT_PROPERTY_NAME = "port";
     private static final String URL_PROPERTY_NAME = "url";
     private static final String DB_USERNAME_PROPERTY_NAME = "dbUsername";
     private static final String DB_PASSWORD_PROPERTY_NAME = "dbPassword";
     private static final String MAX_ACTIVE_PROPERTY_NAME = "max_active";
-    private static final String USER_DIR = "user.dir";
     private final static Logger log = LoggerFactory.getLogger(AppProperties.class.getName());
     private String driver;
-    private Integer port;
     private String url;
     private String dbUsername;
     private String dbPassword;
+    private Integer port;
     private Integer maxActive;
 
     public AppProperties() {
 
-        try (InputStream input = new FileInputStream(System.getProperty(USER_DIR) + RESOURCES_YAML)) {
+        try (InputStream input = new FileInputStream(getClass().getClassLoader().getResource(RESOURCES_YAML).getFile())) {
             Properties props = new Properties();
             props.load(input);
 
@@ -39,7 +38,7 @@ public class AppProperties {
 
             log.info("Loaded config");
         } catch (Exception e) {
-            log.error("Error: ", e);
+            log.error("Error during application properties initialization: ", e);
         }
     }
 

@@ -2,43 +2,37 @@ package ru.nathalie.router;
 
 import ru.nathalie.controller.BalanceController;
 import ru.nathalie.controller.UserController;
-import ru.nathalie.handler.ExcHandler;
-import ru.nathalie.model.iostream.InputStreamData;
-import ru.nathalie.model.iostream.OutputStreamData;
+import ru.nathalie.handler.ErrorHandler;
+import ru.nathalie.model.data.RequestData;
 
 import java.io.IOException;
-import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class Router {
     private static final String HTTP_BAD_REQUEST = "400 Bad Request\n";
-    private Map<String, BiConsumer<InputStreamData, OutputStreamData>> mappings = new HashMap<>();
     private final UserController userController;
     private final BalanceController balanceController;
-    private final ExcHandler handler;
+    private final ErrorHandler handler;
+    private Map<String, Function<String, String>> mappings = new HashMap<>();
 
-    public Router(UserController userController, BalanceController balanceController, ExcHandler handler) {
+    public Router(UserController userController, BalanceController balanceController, ErrorHandler handler) {
         this.userController = userController;
         this.balanceController = balanceController;
         this.handler = handler;
         setRouter();
     }
 
-    public void parseHeaders(InputStreamData isData, Socket socket) throws IOException {
-        userController.setSocket(socket);
-        balanceController.setSocket(socket);
-
-        OutputStreamData osData = new OutputStreamData();
-        if (mappings.containsKey(isData.getMapping())) {
-            mappings.get(isData.getMapping()).accept(isData, osData);
+    public String parseHeaders(RequestData data) {
+        if (mappings.containsKey(data.getMapping())) {
+            return mappings.get(data.getMapping()).apply(data.getArgs());
         } else {
-            handler.printException(new IOException(HTTP_BAD_REQUEST));
+            return handler.getException(new IOException(HTTP_BAD_REQUEST));
         }
     }
 
-    public void setRouter() {
+    private void setRouter() {
         mappings.put("/users", userController::getUsers);
         mappings.put("/balance", balanceController::getBalance);
     }
