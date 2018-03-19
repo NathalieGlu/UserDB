@@ -4,7 +4,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,14 +22,14 @@ public class Connector {
     private static final String USER_NAME = "user_name";
     private static final String USER_BALANCE = "user_balance";
     private static final Logger log = LoggerFactory.getLogger(Connector.class.getName());
-    private final DataSource dataSource;
+    private final ConnectionPool connectionPool;
 
-    public Connector(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public Connector(ConnectionPool connectionPool) {
+        this.connectionPool = connectionPool;
     }
 
     public JSONObject getUsers() {
-        try (Connection connection = dataSource.getConnection();
+        try (Connection connection = connectionPool.getConnection();
              PreparedStatement statement = connection.prepareStatement(GET_USERS);) {
 
             ResultSet rs = statement.executeQuery();
@@ -54,7 +53,7 @@ public class Connector {
     }
 
     public String getBalance(Integer id) {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(GET_BALANCE_BY_ID);
             statement.setInt(1, id);
@@ -70,7 +69,7 @@ public class Connector {
 
     public boolean createUser(String name, String phone, String mail) {
         if (!exists(phone, CHECK_PHONE) && !exists(mail, CHECK_MAIL)) {
-            try (Connection connection = dataSource.getConnection()) {
+            try (Connection connection = connectionPool.getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(GET_MAX_ID);
                 ResultSet rs = statement.executeQuery();
                 rs.next();
@@ -93,7 +92,7 @@ public class Connector {
     }
 
     private boolean exists(String data, String state) {
-        try (Connection connection = dataSource.getConnection()) {
+        try (Connection connection = connectionPool.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(state);
             statement.setString(1, data);
             ResultSet rs = statement.executeQuery();

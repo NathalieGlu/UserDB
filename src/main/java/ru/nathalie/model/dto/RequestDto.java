@@ -1,12 +1,12 @@
-package ru.nathalie.model.data;
+package ru.nathalie.model.dto;
 
 import java.io.IOException;
 
-public class RequestData {
+public class RequestDto {
     private String mapping;
     private String args;
 
-    public RequestData(String requestString) throws IOException {
+    public RequestDto(String requestString) throws IOException {
         parseInput(requestString);
     }
 

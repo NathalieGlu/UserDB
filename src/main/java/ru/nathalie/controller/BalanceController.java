@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class BalanceController extends Controller {
     private static final Logger log = LoggerFactory.getLogger(BalanceController.class.getName());
-    final BalanceDao balanceDao;
+    private final BalanceDao balanceDao;
 
     public BalanceController(BalanceDaoImpl balanceDao, ErrorHandler handler) {
         super(handler);

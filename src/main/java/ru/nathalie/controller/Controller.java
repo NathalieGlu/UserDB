@@ -1,7 +1,7 @@
 package ru.nathalie.controller;
 
 import ru.nathalie.handler.ErrorHandler;
-import ru.nathalie.model.data.ResponseData;
+import ru.nathalie.model.dto.ResponseDto;
 
 class Controller {
     static final String HTTP_NOT_FOUND = "404 Not Found\n";
@@ -19,7 +19,7 @@ class Controller {
     }
 
     String sendOK(String data) {
-        ResponseData os = new ResponseData();
+        ResponseDto os = new ResponseDto();
         os.setCode(HTTP_OK);
         os.setContentLength(String.valueOf(data.length()));
         os.setMessage(data);

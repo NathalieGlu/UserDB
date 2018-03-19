@@ -2,20 +2,31 @@ package ru.nathalie.factory;
 
 import ru.nathalie.config.AppProperties;
 import ru.nathalie.db.ConnectionPool;
+import ru.nathalie.db.ConnectionPoolC3P0;
+import ru.nathalie.db.ConnectionPoolHikari;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 
 public class ServerFactory {
     private Map<String, Object> factory = new HashMap<>();
     private LinkedList<Class> classNeedsArgs = new LinkedList<>();
 
     public ServerFactory() {
+        ConnectionPool connectionPool;
         AppProperties properties = new AppProperties();
         factory.put(properties.getClass().getName(), properties);
-        factory.put(DataSource.class.getName(), new ConnectionPool(properties).setPool());
+        if(properties.getPoolType().equals("c3p0")){
+            factory.put(ConnectionPool.class.getName(), new ConnectionPoolC3P0(properties));
+        }else{
+            factory.put(ConnectionPool.class.getName(), new ConnectionPoolHikari(properties));
+        }
     }
 
     public Object setClass(Class newClass) throws IOException {

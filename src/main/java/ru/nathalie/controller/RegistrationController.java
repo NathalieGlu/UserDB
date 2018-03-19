@@ -1,5 +1,7 @@
 package ru.nathalie.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.nathalie.config.AppProperties;
 import ru.nathalie.handler.ErrorHandler;
 import ru.nathalie.model.dao.RegistrationDao;
@@ -8,9 +10,11 @@ import ru.nathalie.model.dao.RegistrationDaoImpl;
 import java.io.IOException;
 
 public class RegistrationController extends Controller {
-    private final static String PHONE = "phone=";
-    private final static String NAME = "name=";
-    private final static String EMAIL = "email=";
+    private static final Logger log = LoggerFactory.getLogger(RegistrationController.class.getName());
+
+    private static final String PHONE = "phone=";
+    private static final String NAME = "name=";
+    private static final String EMAIL = "email=";
 
     private final RegistrationDao registrationDao;
     private final AppProperties properties;
@@ -25,16 +29,20 @@ public class RegistrationController extends Controller {
     }
 
     public String registerNewUser(String userData) {
-        if (getName(userData) && getPhoneNumber(userData) && getMail(userData)) {
-            if (registrationDao.createUser(name, phoneNumber, email)) {
-                return sendOK("User was registered");
+        try {
+            if (getName(userData) && getPhoneNumber(userData) && getMail(userData)) {
+                if (registrationDao.createUser(name, phoneNumber, email)) {
+                    return sendOK("User was registered");
+                } else {
+                    return throwException(new IOException(HTTP_CONFLICT));
+                }
             } else {
-                return throwException(new IOException(HTTP_CONFLICT));
+                return throwException(new IOException(HTTP_BAD_REQUEST));
             }
-        } else {
+        } catch (Exception e) {
+            log.error("Exception during string parsing: ", e);
             return throwException(new IOException(HTTP_BAD_REQUEST));
         }
-
     }
 
     private boolean getName(String userData) {
@@ -45,6 +53,7 @@ public class RegistrationController extends Controller {
     private boolean getPhoneNumber(String userData) {
         String phoneNumber = userData.substring(userData.indexOf(PHONE) + PHONE.length(), userData.indexOf("?email"));
         if (phoneNumber.length() != properties.getPhoneLength()) {
+            log.error("Invalid telephone number");
             return false;
         } else {
             this.phoneNumber = phoneNumber;
@@ -58,6 +67,7 @@ public class RegistrationController extends Controller {
             this.email = email;
             return true;
         } else {
+            log.error("Domain not supported");
             return false;
         }
     }

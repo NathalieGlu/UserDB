@@ -4,7 +4,7 @@ import ru.nathalie.controller.BalanceController;
 import ru.nathalie.controller.RegistrationController;
 import ru.nathalie.controller.UserController;
 import ru.nathalie.handler.ErrorHandler;
-import ru.nathalie.model.data.RequestData;
+import ru.nathalie.model.dto.RequestDto;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 public class Router {
-    private static final String HTTP_BAD_REQUEST = "400 Bad Request\n";
+    private static final String HTTP_NOT_FOUND = "404 Not Found\n";
     private final UserController userController;
     private final BalanceController balanceController;
     private final RegistrationController registrationController;
@@ -28,11 +28,11 @@ public class Router {
         setRouter();
     }
 
-    public String parseHeaders(RequestData data) {
+    public String parseHeaders(RequestDto data) {
         if (mappings.containsKey(data.getMapping())) {
             return mappings.get(data.getMapping()).apply(data.getArgs());
         } else {
-            return handler.getException(new IOException(HTTP_BAD_REQUEST));
+            return handler.getException(new IOException(HTTP_NOT_FOUND));
         }
     }
 

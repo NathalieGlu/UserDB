@@ -17,7 +17,7 @@ public class UserController extends Controller {
 
     public String getUsers(String is) {
         String jsonAnswer = userDao.getUsers();
-        log.info("Got users from database");
+        log.debug("Got users from database");
         return sendOK(jsonAnswer);
     }
 }
