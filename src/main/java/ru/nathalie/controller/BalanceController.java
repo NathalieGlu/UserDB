@@ -3,16 +3,18 @@ package ru.nathalie.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.nathalie.handler.ErrorHandler;
+import ru.nathalie.model.dao.BalanceDao;
 import ru.nathalie.model.dao.BalanceDaoImpl;
-import ru.nathalie.model.dao.UserDaoImpl;
 
 import java.io.IOException;
 
 public class BalanceController extends Controller {
     private static final Logger log = LoggerFactory.getLogger(BalanceController.class.getName());
+    final BalanceDao balanceDao;
 
-    public BalanceController(UserDaoImpl userDao, BalanceDaoImpl balanceDao, ErrorHandler handler) {
-        super(userDao, balanceDao, handler);
+    public BalanceController(BalanceDaoImpl balanceDao, ErrorHandler handler) {
+        super(handler);
+        this.balanceDao = balanceDao;
     }
 
     public String getBalance(String args) {

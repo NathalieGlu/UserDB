@@ -27,7 +27,8 @@ public class RequestData {
     }
 
     private void parseInput(String requestString) throws IOException {
-        String request = requestString.substring(requestString.indexOf(" ") + 1, requestString.indexOf(" ", requestString.indexOf(" ") + 1));
+        String request = requestString.substring(requestString.indexOf(" ") + 1,
+                requestString.indexOf(" ", requestString.indexOf(" ") + 1));
         if (request.contains("?")) {
             setMapping(request.substring(0, request.indexOf("?")));
             setArgs(request.substring(request.indexOf("?"), request.length()));

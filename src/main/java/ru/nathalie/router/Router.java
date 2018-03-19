@@ -1,6 +1,7 @@
 package ru.nathalie.router;
 
 import ru.nathalie.controller.BalanceController;
+import ru.nathalie.controller.RegistrationController;
 import ru.nathalie.controller.UserController;
 import ru.nathalie.handler.ErrorHandler;
 import ru.nathalie.model.data.RequestData;
@@ -14,12 +15,15 @@ public class Router {
     private static final String HTTP_BAD_REQUEST = "400 Bad Request\n";
     private final UserController userController;
     private final BalanceController balanceController;
+    private final RegistrationController registrationController;
     private final ErrorHandler handler;
     private Map<String, Function<String, String>> mappings = new HashMap<>();
 
-    public Router(UserController userController, BalanceController balanceController, ErrorHandler handler) {
+    public Router(UserController userController, BalanceController balanceController,
+                  RegistrationController registrationController, ErrorHandler handler) {
         this.userController = userController;
         this.balanceController = balanceController;
+        this.registrationController = registrationController;
         this.handler = handler;
         setRouter();
     }
@@ -35,5 +39,6 @@ public class Router {
     private void setRouter() {
         mappings.put("/users", userController::getUsers);
         mappings.put("/balance", balanceController::getBalance);
+        mappings.put("/register", registrationController::registerNewUser);
     }
 }
