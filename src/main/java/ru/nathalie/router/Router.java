@@ -2,6 +2,7 @@ package ru.nathalie.router;
 
 import ru.nathalie.controller.BalanceController;
 import ru.nathalie.controller.RegistrationController;
+import ru.nathalie.controller.TransactionController;
 import ru.nathalie.controller.UserController;
 import ru.nathalie.handler.ErrorHandler;
 import ru.nathalie.model.dto.RequestDto;
@@ -16,14 +17,17 @@ public class Router {
     private final UserController userController;
     private final BalanceController balanceController;
     private final RegistrationController registrationController;
+    private final TransactionController transactionController;
     private final ErrorHandler handler;
-    private Map<String, Function<String, String>> mappings = new HashMap<>();
+    private final Map<String, Function<String, String>> mappings = new HashMap<>();
 
     public Router(UserController userController, BalanceController balanceController,
-                  RegistrationController registrationController, ErrorHandler handler) {
+                  RegistrationController registrationController, TransactionController transactionController,
+                  ErrorHandler handler) {
         this.userController = userController;
         this.balanceController = balanceController;
         this.registrationController = registrationController;
+        this.transactionController = transactionController;
         this.handler = handler;
         setRouter();
     }
@@ -40,5 +44,6 @@ public class Router {
         mappings.put("/users", userController::getUsers);
         mappings.put("/balance", balanceController::getBalance);
         mappings.put("/register", registrationController::registerNewUser);
+        mappings.put("/transaction", transactionController::makeTransaction);
     }
 }

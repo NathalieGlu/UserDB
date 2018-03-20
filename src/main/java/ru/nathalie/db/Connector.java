@@ -8,15 +8,20 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Connector {
     private static final String GET_USERS = "SELECT user_id, user_name FROM users";
     private static final String GET_BALANCE_BY_ID = "SELECT user_balance FROM users WHERE user_id = ?";
+    private static final String GET_MAX_ID = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1";
+    private static final String SET_DATE = "UPDATE users SET last_trc = ? WHERE user_id = ?";
+    private static final String UPDATE_BALANCE = "UPDATE users SET user_balance = ? WHERE user_id = ?";
+    private static final String UPDATE_PREVIOUS_BALANCE = "UPDATE users SET user_balance_prev = ? WHERE user_id = ?";
     private static final String CHECK_PHONE = "SELECT user_phone FROM users WHERE user_phone = ?";
     private static final String CHECK_MAIL = "SELECT user_email FROM users WHERE user_email = ?";
-    private static final String GET_MAX_ID = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1";
     private static final String INSERT_USER = "INSERT INTO users (user_id, user_name, user_phone, user_email) VALUES(?, ?, ?, ?)";
     private static final String USER_ID = "user_id";
     private static final String USER_NAME = "user_name";
@@ -30,7 +35,7 @@ public class Connector {
 
     public JSONObject getUsers() {
         try (Connection connection = connectionPool.getConnection();
-             PreparedStatement statement = connection.prepareStatement(GET_USERS);) {
+             PreparedStatement statement = connection.prepareStatement(GET_USERS)) {
 
             ResultSet rs = statement.executeQuery();
             JSONObject jsonObject = new JSONObject();
@@ -42,10 +47,9 @@ public class Connector {
 
                 jsonObject.put(String.valueOf(rs.getRow()), map);
             }
-
             return jsonObject;
         } catch (SQLException e) {
-            log.error("Exception during statement execution: ", e);
+            log.error("Cannot get users: ", e);
         } catch (Exception e) {
             log.error("Exception during connection: ", e);
         }
@@ -62,13 +66,13 @@ public class Connector {
             rs.next();
             return Double.toString(rs.getDouble(USER_BALANCE));
         } catch (SQLException e) {
-            log.error("Exception during statement execution: ", e);
+            log.error("Cannot get balance: ", e);
             return null;
         }
     }
 
     public boolean createUser(String name, String phone, String mail) {
-        if (!exists(phone, CHECK_PHONE) && !exists(mail, CHECK_MAIL)) {
+        if (notExists(phone, CHECK_PHONE) && notExists(mail, CHECK_MAIL)) {
             try (Connection connection = connectionPool.getConnection()) {
                 PreparedStatement statement = connection.prepareStatement(GET_MAX_ID);
                 ResultSet rs = statement.executeQuery();
@@ -82,7 +86,7 @@ public class Connector {
                 statement.setString(4, mail);
                 statement.executeUpdate();
             } catch (Exception e) {
-                log.error("Exception during statement execution: ", e);
+                log.error("Cannot create user: ", e);
                 return false;
             }
             return true;
@@ -91,15 +95,62 @@ public class Connector {
         }
     }
 
-    private boolean exists(String data, String state) {
+    public String makeTransaction(Integer fromId, Integer toId, Double amount) {
+        Double fromBalance = Double.parseDouble(getBalance(fromId));
+        Double toBalance = Double.parseDouble(getBalance(toId));
+        if (fromBalance < amount) {
+            return "Not enough money on balance\n";
+        } else {
+            if (setBalance(fromId, fromBalance, UPDATE_PREVIOUS_BALANCE) &&
+                    setBalance(toId, toBalance, UPDATE_PREVIOUS_BALANCE) &&
+                    setBalance(fromId, fromBalance - amount, UPDATE_BALANCE) &&
+                    setBalance(toId, toBalance + amount, UPDATE_BALANCE) &&
+                    setTransactionDate(fromId, toId)) {
+                return "OK";
+            } else {
+                return "Error during transaction";
+            }
+        }
+    }
+
+    private boolean notExists(String data, String state) {
         try (Connection connection = connectionPool.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(state);
             statement.setString(1, data);
             ResultSet rs = statement.executeQuery();
-            return rs.next();
+            return !rs.next();
 
         } catch (Exception e) {
-            log.error("Exception during statement execution: ", e);
+            log.error("User doesn't exist: ", e);
+            return true;
+        }
+    }
+
+    private boolean setBalance(Integer id, Double amount, String statementStr) {
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(statementStr);
+            statement.setDouble(1, amount);
+            statement.setInt(2, id);
+            statement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            log.error("Setting of balance failed: ", e);
+            return false;
+        }
+    }
+
+    private boolean setTransactionDate(Integer fromId, Integer toId) {
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(SET_DATE);
+            statement.setTimestamp(1, new Timestamp(new Date().getTime()));
+            statement.setInt(2, fromId);
+            statement.executeUpdate();
+
+            statement.setInt(2, toId);
+            statement.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            log.info("Setting of transaction date failed: ", e);
             return false;
         }
     }

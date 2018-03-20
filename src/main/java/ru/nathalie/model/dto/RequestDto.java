@@ -1,12 +1,10 @@
 package ru.nathalie.model.dto;
 
-import java.io.IOException;
-
 public class RequestDto {
     private String mapping;
     private String args;
 
-    public RequestDto(String requestString) throws IOException {
+    public RequestDto(String requestString) {
         parseInput(requestString);
     }
 
@@ -26,7 +24,7 @@ public class RequestDto {
         this.args = args;
     }
 
-    private void parseInput(String requestString) throws IOException {
+    private void parseInput(String requestString) {
         String request = requestString.substring(requestString.indexOf(" ") + 1,
                 requestString.indexOf(" ", requestString.indexOf(" ") + 1));
         if (request.contains("?")) {

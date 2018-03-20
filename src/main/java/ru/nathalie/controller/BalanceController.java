@@ -28,13 +28,13 @@ public class BalanceController extends Controller {
                 log.error("user_id not found!");
                 return throwException(new IOException(HTTP_NOT_FOUND));
             }
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             log.error("Bad request!");
             return throwException(new IOException(HTTP_BAD_REQUEST));
         }
     }
 
-    private int getId(String mapping) {
+    private Integer getId(String mapping) {
         return Integer.parseInt(mapping.substring(mapping.indexOf("=") + 1, mapping.length()));
     }
 }

@@ -10,7 +10,7 @@ public class BalanceDaoImpl implements BalanceDao {
     }
 
     @Override
-    public String getBalance(int id) {
+    public String getBalance(Integer id) {
         return connector.getBalance(id);
     }
 }

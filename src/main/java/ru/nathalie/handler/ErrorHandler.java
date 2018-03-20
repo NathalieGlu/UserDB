@@ -18,4 +18,16 @@ public class ErrorHandler {
         log.error("Got an exception, printing it: ", throwable);
         return responseDto.getBody();
     }
+
+    public String getException(Throwable throwable, String error) {
+        ResponseDto responseDto = new ResponseDto();
+        String message = throwable.getMessage();
+
+        responseDto.setCode(message);
+        responseDto.setCode(String.valueOf(error.length()));
+        responseDto.setMessage(error);
+
+        log.error("Got an exception, printing it: ", throwable);
+        return responseDto.getBody();
+    }
 }

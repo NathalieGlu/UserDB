@@ -17,7 +17,7 @@ import ru.nathalie.factory.ServerFactory;
 
 public class NettyServer {
     private static final Logger log = LoggerFactory.getLogger(NettyServer.class.getName());
-    private static ServerFactory factory = new ServerFactory();
+    private static final ServerFactory factory = new ServerFactory();
     private static Integer port;
 
     public NettyServer(Integer port) {

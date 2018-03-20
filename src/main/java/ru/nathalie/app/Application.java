@@ -6,8 +6,8 @@ import ru.nathalie.web.NettyServer;
 
 import java.io.IOException;
 
-public class Application {
-    private static ServerFactory factory = new ServerFactory();
+class Application {
+    private static final ServerFactory factory = new ServerFactory();
 
     public static void main(String[] args) throws IOException, InterruptedException {
         AppProperties properties = (AppProperties) factory.setClass(AppProperties.class);

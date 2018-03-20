@@ -23,7 +23,7 @@ public class ConnectionPoolC3P0 implements ConnectionPool {
             cpds.setMaxPoolSize(appProperties.getMaxActive());
             cpds.setMaxStatements(appProperties.getMaxStatements());
         } catch (Exception e) {
-           log.error("Exception during pool setting: ", e);
+            log.error("Exception during pool setting: ", e);
         }
     }
 

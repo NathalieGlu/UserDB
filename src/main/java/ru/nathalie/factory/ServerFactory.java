@@ -15,16 +15,15 @@ import java.util.Map;
 
 
 public class ServerFactory {
-    private Map<String, Object> factory = new HashMap<>();
-    private LinkedList<Class> classNeedsArgs = new LinkedList<>();
+    private final Map<String, Object> factory = new HashMap<>();
+    private final LinkedList<Class> classNeedsArgs = new LinkedList<>();
 
     public ServerFactory() {
-        ConnectionPool connectionPool;
         AppProperties properties = new AppProperties();
         factory.put(properties.getClass().getName(), properties);
-        if(properties.getPoolType().equals("c3p0")){
+        if (properties.getPoolType().equals("c3p0")) {
             factory.put(ConnectionPool.class.getName(), new ConnectionPoolC3P0(properties));
-        }else{
+        } else {
             factory.put(ConnectionPool.class.getName(), new ConnectionPoolHikari(properties));
         }
     }

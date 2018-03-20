@@ -18,6 +18,10 @@ class Controller {
         return handler.getException(throwable);
     }
 
+    String throwException(Throwable throwable, String error) {
+        return handler.getException(throwable, error);
+    }
+
     String sendOK(String data) {
         ResponseDto os = new ResponseDto();
         os.setCode(HTTP_OK);

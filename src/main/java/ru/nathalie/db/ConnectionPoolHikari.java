@@ -9,12 +9,12 @@ import ru.nathalie.config.AppProperties;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ConnectionPoolHikari implements ConnectionPool{
+public class ConnectionPoolHikari implements ConnectionPool {
     private static final Logger log = LoggerFactory.getLogger(ConnectionPoolHikari.class.getName());
     private static final String CACHE_PREP = "cachePrepStmts";
     private static final String CACHE_SIZE = "prepStmtCacheSize";
     private static final String CAHCE_LIMIT = "prepStmtCacheSqlLimit";
-    private static HikariConfig config = new HikariConfig();
+    private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
 
     public ConnectionPoolHikari(AppProperties appProperties) {

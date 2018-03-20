@@ -46,12 +46,12 @@ public class RegistrationController extends Controller {
     }
 
     private boolean getName(String userData) {
-        name = userData.substring(userData.indexOf(NAME) + NAME.length(), userData.indexOf("?phone"));
+        name = userData.substring(userData.indexOf(NAME) + NAME.length(), userData.indexOf(PHONE) - 1);
         return true;
     }
 
     private boolean getPhoneNumber(String userData) {
-        String phoneNumber = userData.substring(userData.indexOf(PHONE) + PHONE.length(), userData.indexOf("?email"));
+        String phoneNumber = userData.substring(userData.indexOf(PHONE) + PHONE.length(), userData.indexOf(EMAIL) - 1);
         if (phoneNumber.length() != properties.getPhoneLength()) {
             log.error("Invalid telephone number");
             return false;
@@ -62,7 +62,7 @@ public class RegistrationController extends Controller {
     }
 
     private boolean getMail(String userData) {
-        String email = userData.substring(userData.indexOf(EMAIL) + EMAIL.length(), userData.length());
+        String email = userData.substring(userData.indexOf(EMAIL) + EMAIL.length());
         if (properties.getDomains().contains(email.substring(email.indexOf("@"), email.length()))) {
             this.email = email;
             return true;
