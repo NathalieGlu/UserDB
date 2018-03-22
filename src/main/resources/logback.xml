@@ -1,9 +1,25 @@
-dbPassword: 123
-dbUsername: nathalie
-driver: org.postgresql.Driver
-url: jdbc:postgresql://127.0.0.1:5432/
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
 
-logging:
-    file: ./logging.log
-    pattern:
-        file: '"%msg%n"'
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %-5p | [%thread] %logger{5}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>logFile.log</file>
+        <append>true</append>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} | %-5p | [%thread] %logger{5}:%L - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="com.memorynotfound" level="TRACE"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+</configuration>

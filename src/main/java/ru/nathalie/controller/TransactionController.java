@@ -28,11 +28,11 @@ public class TransactionController extends Controller {
 
             String response = transactionDao.makeTransaction(fromId, toId, amount);
 
-            if (response.equals("OK")) {
-                return sendOK("Transaction complete");
-            } else {
+            if (response.startsWith("Not") || response.startsWith("Error")) {
                 log.error(response);
                 return throwException(new IOException(HTTP_BAD_REQUEST), response);
+            } else {
+                return sendOK(response);
             }
         } catch (Exception e) {
             log.error("Bad request!");

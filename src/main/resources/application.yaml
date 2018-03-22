@@ -1,0 +1,14 @@
+dbPassword: 123
+dbUsername: nathalie
+driver: org.postgresql.Driver
+url: jdbc:postgresql://127.0.0.1:5432/
+port: 8080
+max_active: 20
+
+phone_length: 11
+domains: "@qiwi.com, @gmail.com, @yahoo.com, @mail.ru, @yandex.ru, @index.ru"
+
+poolType: Hikari
+cachePrepStmts: true
+prepStmtCacheSize: 250
+prepStmtCacheSqlLimit: 2048

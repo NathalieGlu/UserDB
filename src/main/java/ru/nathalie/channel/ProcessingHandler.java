@@ -22,8 +22,8 @@ public class ProcessingHandler extends ChannelInboundHandlerAdapter {
 
         RequestDto requestDto = new RequestDto((String) msg);
         String responseData = router.parseHeaders(requestDto);
-
-        ChannelFuture future = ctx.writeAndFlush(responseData);
+        System.out.println(responseData);
+        ChannelFuture future = ctx.writeAndFlush(responseData).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         future.addListener(ChannelFutureListener.CLOSE);
         ctx.close();
     }

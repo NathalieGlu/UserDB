@@ -13,7 +13,7 @@ public class ConnectionPoolHikari implements ConnectionPool {
     private static final Logger log = LoggerFactory.getLogger(ConnectionPoolHikari.class.getName());
     private static final String CACHE_PREP = "cachePrepStmts";
     private static final String CACHE_SIZE = "prepStmtCacheSize";
-    private static final String CAHCE_LIMIT = "prepStmtCacheSqlLimit";
+    private static final String CACHE_LIMIT = "prepStmtCacheSqlLimit";
     private static final HikariConfig config = new HikariConfig();
     private static HikariDataSource ds;
 
@@ -24,7 +24,7 @@ public class ConnectionPoolHikari implements ConnectionPool {
             config.setPassword(appProperties.getDbPassword());
             config.addDataSourceProperty(CACHE_PREP, "true");
             config.addDataSourceProperty(CACHE_SIZE, appProperties.getCacheSize());
-            config.addDataSourceProperty(CAHCE_LIMIT, appProperties.getCacheLimit());
+            config.addDataSourceProperty(CACHE_LIMIT, appProperties.getCacheLimit());
             ds = new HikariDataSource(config);
         } catch (Exception e) {
             log.error("Exception during pool setting: ", e);

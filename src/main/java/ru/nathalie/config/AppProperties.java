@@ -22,7 +22,7 @@ public class AppProperties {
     private static final String PHONE_LENGTH_PROPERTY_NAME = "phone_length";
     private static final String DOMAINS_PROPERTY_NAME = "domains";
     private static final String CACHE_SIZE = "prepStmtCacheSize";
-    private static final String CAHCE_LIMIT = "prepStmtCacheSqlLimit";
+    private static final String CACHE_LIMIT = "prepStmtCacheSqlLimit";
     private static final Logger log = LoggerFactory.getLogger(AppProperties.class.getName());
     private List<String> domains;
     private String driver;
@@ -58,7 +58,7 @@ public class AppProperties {
                 this.maxStatements = Integer.valueOf(props.getProperty(MAX_STATEMENTS_PROPERTY_NAME));
             } else {
                 this.cacheSize = Integer.valueOf(props.getProperty(CACHE_SIZE));
-                this.cacheLimit = Integer.valueOf(props.getProperty(CAHCE_LIMIT));
+                this.cacheLimit = Integer.valueOf(props.getProperty(CACHE_LIMIT));
             }
 
             log.info("Loaded config");

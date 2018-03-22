@@ -17,16 +17,23 @@ public class Connector {
     private static final String GET_USERS = "SELECT user_id, user_name FROM users";
     private static final String GET_BALANCE_BY_ID = "SELECT user_balance FROM users WHERE user_id = ?";
     private static final String GET_MAX_ID = "SELECT user_id FROM users ORDER BY user_id DESC LIMIT 1";
-    private static final String SET_DATE = "UPDATE users SET last_trc = ? WHERE user_id = ?";
-    private static final String UPDATE_BALANCE = "UPDATE users SET user_balance = ? WHERE user_id = ?";
-    private static final String UPDATE_PREVIOUS_BALANCE = "UPDATE users SET user_balance_prev = ? WHERE user_id = ?";
     private static final String CHECK_PHONE = "SELECT user_phone FROM users WHERE user_phone = ?";
     private static final String CHECK_MAIL = "SELECT user_email FROM users WHERE user_email = ?";
     private static final String INSERT_USER = "INSERT INTO users (user_id, user_name, user_phone, user_email) VALUES(?, ?, ?, ?)";
     private static final String USER_ID = "user_id";
     private static final String USER_NAME = "user_name";
     private static final String USER_BALANCE = "user_balance";
+    private static final String USER_BALANCE_PREV = "user_balance_prev";
     private static final Logger log = LoggerFactory.getLogger(Connector.class.getName());
+    private static final String UPDATE_BALANCES_TRANSACTION = "BEGIN;" +
+            "UPDATE users SET last_trc = ? WHERE user_id IN (?, ?);" +
+            "UPDATE users SET user_balance_prev = user_balance WHERE user_id = ?;" +
+            "UPDATE users SET user_balance = user_balance - ? WHERE user_id = ?;" +
+            "UPDATE users SET user_balance_prev = user_balance WHERE user_id = ?;" +
+            "UPDATE users SET user_balance = user_balance + ? WHERE user_id = ?;";
+    private static final String GET_BALANCE = "SELECT user_balance FROM users WHERE user_id = ?;";
+    private static final String GET_PREVIOUS_BALANCE = "SELECT user_balance_prev FROM users WHERE user_id = ?;";
+    private static final String COMMIT = "COMMIT;";
     private final ConnectionPool connectionPool;
 
     public Connector(ConnectionPool connectionPool) {
@@ -56,7 +63,7 @@ public class Connector {
         return null;
     }
 
-    public String getBalance(Integer id) {
+    public String getBalanceById(Integer id) {
         try (Connection connection = connectionPool.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(GET_BALANCE_BY_ID);
@@ -96,17 +103,25 @@ public class Connector {
     }
 
     public String makeTransaction(Integer fromId, Integer toId, Double amount) {
-        Double fromBalance = Double.parseDouble(getBalance(fromId));
-        Double toBalance = Double.parseDouble(getBalance(toId));
+        Double fromBalance = Double.parseDouble(getBalanceById(fromId));
+
         if (fromBalance < amount) {
             return "Not enough money on balance\n";
         } else {
-            if (setBalance(fromId, fromBalance, UPDATE_PREVIOUS_BALANCE) &&
-                    setBalance(toId, toBalance, UPDATE_PREVIOUS_BALANCE) &&
-                    setBalance(fromId, fromBalance - amount, UPDATE_BALANCE) &&
-                    setBalance(toId, toBalance + amount, UPDATE_BALANCE) &&
-                    setTransactionDate(fromId, toId)) {
-                return "OK";
+            if (commitTransaction(fromId, toId, amount)) {
+                JSONObject jsonFrom = new JSONObject()
+                        .put("before", getBalance(fromId, GET_PREVIOUS_BALANCE, USER_BALANCE_PREV))
+                        .put("after", getBalance(fromId, GET_BALANCE, USER_BALANCE));
+
+                JSONObject jsonTo = new JSONObject()
+                        .put("before", getBalance(toId, GET_PREVIOUS_BALANCE, USER_BALANCE_PREV))
+                        .put("after", getBalance(toId, GET_BALANCE, USER_BALANCE));
+
+                JSONObject js = new JSONObject()
+                        .put(fromId.toString(), jsonFrom)
+                        .put(toId.toString(), jsonTo);
+                commit();
+                return js.toString();
             } else {
                 return "Error during transaction";
             }
@@ -126,31 +141,44 @@ public class Connector {
         }
     }
 
-    private boolean setBalance(Integer id, Double amount, String statementStr) {
+    private Double getBalance(Integer id, String query, String balanceType) {
         try (Connection connection = connectionPool.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(statementStr);
-            statement.setDouble(1, amount);
-            statement.setInt(2, id);
-            statement.executeUpdate();
-            return true;
-        } catch (Exception e) {
-            log.error("Setting of balance failed: ", e);
-            return false;
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            rs.next();
+            return rs.getDouble(balanceType);
+        } catch (SQLException e) {
+            log.error("Cannot get balance: ", e);
+            return null;
         }
     }
 
-    private boolean setTransactionDate(Integer fromId, Integer toId) {
+    private void commit() {
         try (Connection connection = connectionPool.getConnection()) {
-            PreparedStatement statement = connection.prepareStatement(SET_DATE);
+            PreparedStatement statement = connection.prepareStatement(COMMIT);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            log.error("Cannot get balance: ", e);
+        }
+    }
+
+    private boolean commitTransaction(Integer fromId, Integer toId, Double amount) {
+        try (Connection connection = connectionPool.getConnection()) {
+            PreparedStatement statement = connection.prepareStatement(UPDATE_BALANCES_TRANSACTION);
             statement.setTimestamp(1, new Timestamp(new Date().getTime()));
             statement.setInt(2, fromId);
-            statement.executeUpdate();
-
-            statement.setInt(2, toId);
+            statement.setInt(3, toId);
+            statement.setInt(4, fromId);
+            statement.setDouble(5, amount);
+            statement.setInt(6, fromId);
+            statement.setInt(7, toId);
+            statement.setDouble(8, amount);
+            statement.setInt(9, toId);
             statement.executeUpdate();
             return true;
         } catch (Exception e) {
-            log.info("Setting of transaction date failed: ", e);
+            log.error(e.getMessage());
             return false;
         }
     }

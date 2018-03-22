@@ -11,6 +11,6 @@ public class BalanceDaoImpl implements BalanceDao {
 
     @Override
     public String getBalance(Integer id) {
-        return connector.getBalance(id);
+        return connector.getBalanceById(id);
     }
 }
